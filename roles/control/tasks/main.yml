@@ -13,7 +13,22 @@
               path: "/{{item}}"
               state: directory
               mode: 0755
-      with_items: ["acpc","acpc/progs"]
+      with_items: ["acpc"]
+
+    - name: Deploy to /acpc/adm
+      git:
+          repo: 'https://github.com/ACM-ACPC/acpc-control-adm'
+          dest: /acpc/adm
+
+    - name: Deploy to /var/lib/tftpboot
+      git:
+              repo: 'https://github.com/ACM-ACPC/acpc-control-tftpd'
+              dest: /var/lib/tftpboot
+
+    - name: Deploy to /acpc/progs
+      git:
+              repo: 'https://github.com/ACM-ACPC/acpc-control-prog'
+              dest: /acpc/progs
 
     - name: Install basic packages needed
       apt:
@@ -116,6 +131,7 @@
         - "/acpc/adm/etc/dhcp/dhcpd.conf.hosts r,"
         - "/acpc/adm/etc/dhcp/domainupdate r,"
         - "/acpc/adm/etc/dhcp/reversedomainupdate r,"
+        - "/acpc/adm/etc/dhcp/dhcpupdate.conf r,"
       notify:
         - Apparmor config changed
         - ISC-DHCP config changed
