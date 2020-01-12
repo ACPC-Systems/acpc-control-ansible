@@ -1,0 +1,1 @@
+control ansible_host=10.0.2.2 ansible_port=2222 ansible_private_key_file=/vms_private_keys/acpccontrol ansible_user=vagrant

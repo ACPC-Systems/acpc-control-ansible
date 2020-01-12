@@ -1,0 +1,133 @@
+    - name: add hostname to hosts file
+      lineinfile:
+       dest: /etc/hosts
+       line: "127.0.0.1 acpccontrol"
+       state: present
+
+    - name: set the hostname
+      hostname:
+       name: acpccontrol
+
+    - name: Create /acpc tree
+      file:
+              path: "/{{item}}"
+              state: directory
+              mode: 0755
+      with_items: ["acpc","acpc/progs"]
+
+    - name: Transfer and extract acpc_adm.tar
+      unarchive:
+              src: acpc/acpc_adm.tar
+              dest: /acpc 
+
+    - name: Install basic packages needed
+      apt:
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa"]
+              update_cache: yes
+
+    - name: Update apache2 config
+      lineinfile:
+              dest: /etc/apache2/apache2.conf
+              line: "Include /acpc/adm/etc/apache2/server.conf"
+              state: present
+      notify: Apache2 config changed
+
+    - name: Update Apache2 default site
+      lineinfile:
+              dest: /etc/apache2/sites-enabled/000-default.conf
+              line: "Include /acpc/adm/etc/apache2/acpc.conf"
+              state: present
+      notify: Apache2 config changed
+
+    - apache2_module:
+       state: present
+       name: cgid
+      notify: Apache2 config changed
+
+    - name: Update BIND9 configuration files named.conf
+      lineinfile:
+              dest: /etc/bind/named.conf
+              line: "include \"/acpc/adm/etc/bind/acls.conf\";"
+              state: present
+      notify: BIND9 config changed
+
+
+    - name: Update BIND9 configuration files named.conf.default-zones
+      lineinfile:
+              dest: /etc/bind/named.conf.default-zones
+              line: "{{ item }}"
+              state: present
+      with_items: 
+              - "include \"/acpc/adm/etc/bind/acpcDomain.conf\";"
+              - "include \"/acpc/adm/etc/bind/acpcReverseDomain.conf\";"
+      notify: BIND9 config changed
+
+    - name: Update BIND9 configuration files named.conf.options
+      lineinfile:
+              dest: /etc/bind/named.conf.options
+              line: "include \"/acpc/adm/etc/bind/dhcpupdate.conf\";"
+              state: present
+      notify: BIND9 config changed
+
+    - name: Copying empty template for forward resolv
+      copy:
+              src: /etc/bind/db.empty
+              dest: /var/lib/bind/aecpc.eg
+              remote_src: yes
+              owner: bind
+              group: bind
+      notify: BIND9 config changed
+
+    - name: Copying empty template for reverse resolv
+      copy:
+              src: /etc/bind/db.0
+              dest: /var/lib/bind/16.20.172.in-addr.arpa
+              remote_src: yes
+              owner: bind
+              group: bind
+      notify: BIND9 config changed
+
+    - name: Copy dhcpd.conf file
+      copy:
+              src: acpc/dhcpd.conf
+              dest: /etc/dhcp/dhcpd.conf
+      notify: ISC-DHCP config changed
+
+    - name: Allow bind-dhcp dynamic update to write to dirs with named
+      lineinfile:
+        path: /etc/apparmor.d/usr.sbin.named
+        line: "{{item}}"
+        state: present
+        insertbefore: "}"
+      with_items: 
+        - "/acpc/adm/etc/bind/dhcpupdate.conf r,"
+        - "/acpc/adm/etc/bind/acpcDomain.conf r,"
+        - "/acpc/adm/etc/bind/acpcReverseDomain.conf r,"
+        - "/acpc/adm/etc/bind/acls.conf r,"
+      notify: 
+        - Apparmor config changed
+        - BIND9 config changed
+    
+    - name: Allow bind-dhcp dynamic update to write to dirs with dhcpd
+      lineinfile:
+        path: /etc/apparmor.d/usr.sbin.dhcpd
+        line: "{{item}}"
+        state: present
+        insertbefore: "}"
+      with_items:
+        - "/acpc/adm/etc/dhcp/dhcpd.conf.options r,"
+        - "/acpc/adm/etc/bind/dhcpupdate.conf r,"
+        - "/acpc/adm/etc/dhcp/dhcpd.conf.subnet r,"
+        - "/acpc/adm/etc/dhcp/dhcpd.conf.hosts r,"
+        - "/acpc/adm/etc/dhcp/domainupdate r,"
+        - "/acpc/adm/etc/dhcp/reversedomainupdate r,"
+      notify:
+        - Apparmor config changed
+        - ISC-DHCP config changed
+
+    - name: Disable ssh HostKeyChecking
+      replace:
+             path: /etc/ssh/ssh_config
+             regexp: "#   StrictHostKeyChecking ask"
+             replace: "StrictHostKeyChecking no"
+

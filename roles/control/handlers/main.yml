@@ -1,0 +1,22 @@
+---
+# handlers file for control
+
+- name: Restart AppArmor
+  service: name=apparmor
+  listen: Apparmor config changed
+
+- name: Restart apache2
+  service: name=apache2 state=restarted
+  listen: Apache2 config changed
+
+- name: Restart BIND9
+  service: name=bind9 state=restarted
+  listen: BIND9 config changed
+ 
+- name: Restart ISC-DHCP-SERVER
+  service: name=isc-dhcp-server state=restarted
+  listen: ISC-DHCP config changed
+
+- name: Restart TFTPD
+  service: name=tftpd-hpa start=restarted
+  listen: TFTPD service
