@@ -15,14 +15,9 @@
               mode: 0755
       with_items: ["acpc","acpc/progs"]
 
-    - name: Transfer and extract acpc_adm.tar
-      unarchive:
-              src: acpc/acpc_adm.tar
-              dest: /acpc 
-
     - name: Install basic packages needed
       apt:
-              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa"]
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip"]
               update_cache: yes
 
     - name: Update apache2 config
