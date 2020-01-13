@@ -17,22 +17,22 @@
 
     - name: Deploy to /acpc/adm
       git:
-          repo: 'https://github.com/ACM-ACPC/acpc-control-adm'
+          repo: '{{ACPC_GITHUP}}/acpc-control-adm'
           dest: /acpc/adm
 
     - name: Deploy to /var/lib/tftpboot
       git:
-              repo: 'https://github.com/ACM-ACPC/acpc-control-tftpd'
+              repo: '{{ACPC_GITHUP}}/acpc-control-tftpd'
               dest: /var/lib/tftpboot
 
     - name: Deploy to /acpc/progs
       git:
-              repo: 'https://github.com/ACM-ACPC/acpc-control-prog'
+              repo: '{{ACPC_GITHUP}}/acpc-control-prog'
               dest: /acpc/progs
 
     - name: Install basic packages needed
       apt:
-              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip"]
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc"]
               update_cache: yes
 
     - name: Update apache2 config
@@ -142,3 +142,24 @@
              regexp: "#   StrictHostKeyChecking ask"
              replace: "StrictHostKeyChecking no"
 
+    - name: Extract perl modules 
+      unarchive:
+        src: "{{item}}" 
+        dest: "/tmp"
+      with_items:
+              - "acpc/PDF-Create-1.46.tar.gz"
+              - "acpc/File-ShareDir-Install-0.13.tar.gz"
+              - "acpc/JSON-4.02.tar.gz"
+              - "acpc/Class-Inspector-1.36.tar.gz"
+              - "acpc/File-ShareDir-1.116.tar.gz"
+              - "acpc/File-Share-0.25.tar.gz"
+
+    - name: Configure and install perl modules
+      shell: "cd {{item}} && perl Makefile.PL && make && make install"
+      with_items:
+              - "/tmp/Class-Inspector-1.36"
+              - "/tmp/File-ShareDir-1.116"
+              - "/tmp/File-Share-0.25"
+              - "/tmp/File-ShareDir-Install-0.13"
+              - "/tmp/PDF-Create-1.46"
+              - "/tmp/JSON-4.02"
