@@ -19,5 +19,8 @@ while the control role is found under role directory. The control playbook runs 
   * cd acpc-control-ansible
   * ansible-playbook files/control.yml
 
-
+# Ubuntu mirror
+To install the different roles of ACPC, the control needs a local copy of the ubuntu mirror which can be downloaded from the repo 
+https://github.com/ACM-ACPC/acpc-control-mirror.
+The mirror size is +90G depends on the distro and architecture(s). For X86-64 ubuntu mirror is around 85G. The control server looks for the mirror under directory /MirrorPool. Either download the mirror in this directory, or mount this directory to a different partition to be able to move this partition from VM to another. In case using a different partition, do not forget to add its mount point to /etc/fstab
 
