@@ -17,7 +17,7 @@
 
     - name: Install basic packages needed
       apt:
-              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc","libnm-glib-dev"]
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc","libnm-glib-dev","network-manager"]
               update_cache: yes
 
     - name: Deploy to /acpc/adm
@@ -172,10 +172,10 @@
     - name: Updating /boot/grub/grub.cfg 
       shell: "grub-mkconfig -o /boot/grub/grub.cfg"
 
-    - name: Install Network-Manager
-      apt:
+    - name: Start Network-Manager
+      service:
        name: network-manager
-       update-cache: yes
+       state: started
 
     - name: create 10-globally-managed-devices.conf
       file:
