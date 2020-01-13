@@ -172,12 +172,12 @@
     - name: Updating /boot/grub/grub.cfg 
       shell: "grub-mkconfig -o /boot/grub/grub.cfg"
 
-    - name: create 10-globally-managed-devices.conf
-      file:
-              path: "/etc/NetworkManager/conf.d/10-globally-managed-devices.conf"
-              state: touch
-
     - name: Install Network-Manager
       apt:
        name: network-manager
        update-cache: yes
+
+    - name: create 10-globally-managed-devices.conf
+      file:
+              path: "/etc/NetworkManager/conf.d/10-globally-managed-devices.conf"
+              state: touch
