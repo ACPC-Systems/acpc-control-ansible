@@ -17,7 +17,7 @@
 
     - name: Install basic packages needed
       apt:
-              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc"]
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc","libnm-glib-dev"]
               update_cache: yes
 
     - name: Deploy to /acpc/adm
@@ -181,3 +181,14 @@
       file:
               path: "/etc/NetworkManager/conf.d/10-globally-managed-devices.conf"
               state: touch
+
+    - name: Configure an ethernet connection for eth0
+      nmcli:
+              conn_name: Internal
+              ifname: eth0
+              type: ethernet
+              ip4: 172.20.16.2/24
+              gw4: 172.20.16.5
+              state: present
+              autoconnect: yes
+
