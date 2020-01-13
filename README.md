@@ -13,7 +13,7 @@ while the control role is found under role directory. The control playbook runs 
   * sudo pip install ansible
   * mkdir ansible
   * cd ansible
-  * github clone https://github.com/ACM-ACPC/acpc-control-ansible
+  * git clone https://github.com/ACPC-Systems/acpc-control-ansible
 
 # Usage
   * cd acpc-control-ansible
