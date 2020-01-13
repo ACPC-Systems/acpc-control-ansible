@@ -15,6 +15,11 @@
               mode: 0755
       with_items: ["acpc","/MirrorPool"]
 
+    - name: Install basic packages needed
+      apt:
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc"]
+              update_cache: yes
+
     - name: Deploy to /acpc/adm
       git:
           repo: '{{ACPC_GITHUP}}/acpc-control-adm'
@@ -29,11 +34,6 @@
       git:
               repo: '{{ACPC_GITHUP}}/acpc-control-prog'
               dest: /acpc/progs
-
-    - name: Install basic packages needed
-      apt:
-              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc"]
-              update_cache: yes
 
     - name: Update apache2 config
       lineinfile:
@@ -163,3 +163,21 @@
               - "/tmp/File-ShareDir-Install-0.13"
               - "/tmp/PDF-Create-1.46"
               - "/tmp/JSON-4.02"
+
+    - name: Copy /etc/default/grub
+      copy:
+              src: acpc/grub
+              dest: /etc/default/grub
+
+    - name: Updating /boot/grub/grub.cfg 
+      shell: "grub-mkconfig -o /boot/grub/grub.cfg"
+
+    - name: create 10-globally-managed-devices.conf
+      file:
+              path: "/etc/NetworkManager/conf.d/10-globally-managed-devices.conf"
+              state: touch
+
+    - name: Install Network-Manager
+      apt:
+       name: network-manager
+       update-cache: yes
