@@ -13,7 +13,7 @@
               path: "/{{item}}"
               state: directory
               mode: 0755
-      with_items: ["acpc"]
+      with_items: ["acpc","/MirrorPool"]
 
     - name: Deploy to /acpc/adm
       git:
