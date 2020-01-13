@@ -17,7 +17,7 @@ while the control role is found under role directory. The control playbook runs 
 
 # Usage
   * cd acpc-control-ansible
-  * ansible-playbook files/control.yml
+  * sudo ansible-playbook files/control.yml
 
 # Ubuntu mirror
 To install the different roles of ACPC, the control needs a local copy of the ubuntu mirror which can be downloaded from the repo 
