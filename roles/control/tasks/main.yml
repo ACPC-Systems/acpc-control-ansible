@@ -17,7 +17,7 @@
 
     - name: Install basic packages needed
       apt:
-              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc","libnm-glib-dev","network-manager"]
+              name: ["apache2","bind9","isc-dhcp-server","tftpd-hpa","git","python-pip","make","gcc","libnm-glib-dev","network-manager","firewalld"]
               update_cache: yes
 
     - name: Deploy to /acpc/adm
@@ -191,4 +191,21 @@
               gw4: 172.20.16.5
               state: present
               autoconnect: yes
+
+    - name: Starting firewalld
+      service:
+              name: firewalld
+              state: started
+
+    - name: Configuring firewalld rules
+      firewalld:
+              service: "{{item}}"
+              permanent: yes
+              state: enabled
+      with_items:
+              - "http"
+              - "https"
+              - "dns"
+              - "dhcp"
+              - "tftp"
 
