@@ -9,8 +9,8 @@ while the control role is found under role directory. The control playbook runs 
 
 # Installation
   * sudo apt update
-  * sudo apt -y install git-hub python-pip
-  * sudo pip install ansible
+  * sudo apt -y install git-hub python3-pip
+  * sudo pip3 install ansible
   * mkdir ansible
   * cd ansible
   * git clone https://github.com/ACPC-Systems/acpc-control-ansible
