@@ -25,3 +25,5 @@ To install the different roles of ACPC, the control needs a local copy of the ub
 https://github.com/ACPC-Systems/acpc-control-mirror.
 The mirror size is +90G depends on the distro and architecture(s). For X86-64 ubuntu mirror is around 85G. The control server looks for the mirror under directory /MirrorPool. Either download the mirror in this directory, or mount this directory to a different partition to be able to move this partition from VM to another. In case using a different partition, do not forget to add its mount point to /etc/fstab
 
+# What is next?
+After installing, and configuring the ACPC Control server,it is time to sync the Mirror from ubuntu mirror to a local web server. visit https://github.com/ACPC-Systems/acpc-control-mirror.
